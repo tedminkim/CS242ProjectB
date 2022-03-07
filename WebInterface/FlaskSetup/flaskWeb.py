@@ -14,6 +14,7 @@ def index():
 @app.route("/lucene", methods=['GET', 'POST'])
 def lucene():
     search = SearchForm(request.form)
+    search_string = search.data['search']
     if request.method == 'POST':
         return lucene_results(search)
 
@@ -34,13 +35,28 @@ def lucene_results(search):
     #print(search.data['search'], file=sys.stdout)
     if search.data['search'] == '':
         flash('Please enter a search query. Try again?')
-        return redirect('/')
+        return redirect('/lucene')
     if not results:
         flash('No results found. Try again?')
-        return redirect('/')
+        return redirect('/lucene')
     else:
         #display results
         return render_template('lucene_results.html', results=results)
+
+@app.route("/hadoop_results")
+def hadoop_results(search):
+    results = []
+    search_string = search.data['search']
+    #print(search.data['search'], file=sys.stdout)
+    if search.data['search'] == '':
+        flash('Please enter a search query. Try again?')
+        return redirect('/hadoop')
+    if not results:
+        flash('No results found. Try again?')
+        return redirect('/hadoop')
+    else:
+        #display results
+        return render_template('hadoop_results.html', results=results)
 
 if __name__ == "__main__":
     app.secret_key = 'ooga booga'

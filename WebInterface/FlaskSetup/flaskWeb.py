@@ -1,10 +1,14 @@
 from __future__ import print_function
 from flask import Flask, redirect, url_for, render_template, request, flash, session
+from gensim.parsing.preprocessing import remove_stopwords
+from nltk.stem import PorterStemmer
 from flask_session import Session
 from forms import SearchForm
 import sys
+import string
 
 app = Flask(__name__)
+porter = PorterStemmer()
 sess = Session()
 
 @app.route("/")
@@ -32,7 +36,15 @@ def hadoop():
 def lucene_results(search):
     results = []
     search_string = search.data['search']
-    #print(search.data['search'], file=sys.stdout)
+    #before pre-processing
+    #print(search_string, file=sys.stdout)
+    #remove punctuation
+    search_string = ' '.join(word.strip(string.punctuation) for word in search_string.split())
+    search_string = remove_stopwords(search_string)
+    search_string = porter.stem(search_string)
+    #after pre-processing
+    #print(search_string, file=sys.stdout)
+
     if search.data['search'] == '':
         flash('Please enter a search query. Try again?')
         return redirect('/lucene')

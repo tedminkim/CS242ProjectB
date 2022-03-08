@@ -11,6 +11,10 @@ app = Flask(__name__)
 porter = PorterStemmer()
 sess = Session()
 
+def write_file(data):
+    with open ('user_query.txt','w') as f:
+        f.write(data)
+
 @app.route("/")
 def index():
     return render_template("index.html")
@@ -44,6 +48,8 @@ def lucene_results(search):
     search_string = porter.stem(search_string)
     #after pre-processing
     #print(search_string, file=sys.stdout)
+    #write to txt file
+    write_file(search_string)
 
     if search.data['search'] == '':
         flash('Please enter a search query. Try again?')
